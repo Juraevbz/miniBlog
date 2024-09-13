@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func Run(port string, handler http.Handler) error {
+func (h *Handler) Run(port string, handler http.Handler) error {
 	httpServer := &http.Server{
 		Addr:           ":" + port,
 		Handler:        handler,

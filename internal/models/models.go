@@ -12,8 +12,8 @@ type User struct {
 	Email        string `gorm:"unique; not null"`
 	PasswordHash string `gorm:"not null"`
 	AvatarURL    *string
-	Posts        []Post    `gorm:"foreignKey:AuthorID"`
-	Comments     []Comment `gorm:"foreignKey:AuthorID"`
+	Posts        []Post    `gorm:"foreignKey:UserID"`
+	Comments     []Comment `gorm:"foreignKey:UserID"`
 	Repost       []Repost  `gorm:"foreignKey:UserID"`
 }
 
