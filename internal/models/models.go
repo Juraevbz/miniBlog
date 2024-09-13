@@ -14,6 +14,7 @@ type User struct {
 	AvatarURL    *string
 	Posts        []Post    `gorm:"foreignKey:AuthorID"`
 	Comments     []Comment `gorm:"foreignKey:AuthorID"`
+	Repost       []Repost  `gorm:"foreignKey:UserID"`
 }
 
 type Post struct {
@@ -43,12 +44,4 @@ type Repost struct {
 	PostID    uint
 	UserID    uint
 	CreatedAt time.Time
-}
-
-type Favorite struct {
-	ID     uint `gorm:"foreignKey"`
-	PostID uint `gorm:"not null"`
-	UserID uint `gorm:"not null"`
-	Post   Post `gorm:"foreignKey:PostID"`
-	User   User `gorm:"foreignKey:UserID"`
 }

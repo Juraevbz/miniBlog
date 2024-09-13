@@ -20,7 +20,6 @@ func DBConnection(dsn string) (db *gorm.DB, err error) {
 		&models.Comment{},
 		&models.Like{},
 		&models.Repost{},
-		&models.Favorite{},
 	)
 
 	if err != nil {
