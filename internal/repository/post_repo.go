@@ -50,4 +50,5 @@ func (r *Repository) DeletePostRepo(ctx context.Context, postID int) error {
 	}
 
 	return nil
+	
 }
