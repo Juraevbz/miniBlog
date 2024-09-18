@@ -33,7 +33,7 @@ func (r *Repository) GetPostsRepo(ctx context.Context) ([]*models.Post, error) {
 
 	return posts, nil
 }
- 
+
 func (r *Repository) UpdatePostRepo(ctx context.Context, postID int, p models.Post) (*models.Post, error) {
 	err := r.DB.WithContext(ctx).Model(&models.Post{}).Where("id = ?", postID).Updates(&p).Error
 	if err != nil {
@@ -50,5 +50,4 @@ func (r *Repository) DeletePostRepo(ctx context.Context, postID int) error {
 	}
 
 	return nil
-	
 }
