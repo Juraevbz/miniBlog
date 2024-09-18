@@ -19,5 +19,16 @@ func NewHandler(service *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
 
+	post := router.Group("/post")
+	{
+		post.POST("/create", h.CreatePostHandler)
+		post.GET("/:id", h.GetPostByIDHandler)
+		post.GET("/all", h.GetPostsHandler)
+		post.PUT("/update/:id", h.UpdatePostHandler)
+		post.DELETE("/delete", h.DeletePostHandler)
+	}
+
 	return router
 }
+
+

@@ -2,46 +2,53 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	Username     string `gorm:"unique; not null"`
-	Email        string `gorm:"unique; not null"`
-	PasswordHash string `gorm:"not null"`
-	AvatarURL    *string
+	ID           uint      `json:"id" gorm:"primarykey"`
+	Username     string    `json:"username"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	AvatarURL    *string   `json:"avatar_url"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	DeletedAt    time.Time `json:"deleted_at"`
 	Posts        []Post    `gorm:"foreignKey:UserID"`
 	Comments     []Comment `gorm:"foreignKey:UserID"`
 	Repost       []Repost  `gorm:"foreignKey:UserID"`
 }
 
 type Post struct {
-	gorm.Model
-	UserID   uint   `gorm:"not null"`
-	Title    string `gorm:"not null"`
-	Content  string `gorm:"not null"`
-	ImageURL string
+	ID        uint      `json:"id"`
+	UserID    uint      `json:"user_id"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	ImageURL  string    `json:"image_url"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
 type Comment struct {
-	gorm.Model
-	UserID  uint
-	PostID  uint
-	Content string
+	ID        uint      `json:"id"`
+	UserID    uint      `json:"user_id"`
+	PostID    uint      `json:"post_id"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
 type Like struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    uint
-	PostID    uint
-	CreatedAt time.Time
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	UserID    uint      `json:"user_id"`
+	PostID    uint      `json:"post_id"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Repost struct {
-	ID        uint `gorm:"primaryKey"`
-	PostID    uint
-	UserID    uint
-	CreatedAt time.Time
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	PostID    uint      `json:"post_id"`
+	UserID    uint      `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
 }
