@@ -27,7 +27,7 @@ func DBConnection(dsn string) (db *gorm.DB, err error) {
 		&models.Post{},
 		&models.Comment{},
 		&models.Like{},
-		&models.Repost{},
+		// &models.Repost{},
 	)
 
 	if err != nil {

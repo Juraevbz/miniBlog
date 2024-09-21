@@ -9,7 +9,11 @@ import (
 )
 
 func main() {
-
+	// TODO: Logger
+	// TODO: Validation in service layer
+	// TODO: Swagger docs 
+	// TODO: Test
+	
 	dsn, err := config.InitConfig()
 	if err != nil {
 		log.Fatal("error initialize configuration", err)
@@ -24,9 +28,7 @@ func main() {
 	service := service.NewService(repository)
 	handler := handler.NewHandler(service)
 
-	log.Println("Server is listening...")
 	if err = handler.Run("8080", handler.InitRoutes()); err != nil {
 		log.Fatal("error running server", err)
 	}
-
 }

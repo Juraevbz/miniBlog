@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) CreatePostHandler(c *gin.Context) {
+func (h *Handler) CreatePost(c *gin.Context) {
 	in := struct {
 		Title    string `json:"title"`
 		Content  string `json:"content"`
@@ -16,55 +16,55 @@ func (h *Handler) CreatePostHandler(c *gin.Context) {
 	}{}
 
 	if err := c.BindJSON(&in); err != nil {
-		c.JSON(400, gin.H{"error": errs.ErrBadRequest.Error()})
+		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	post, err := h.service.CreatePostService(c, models.Post{
+	post, err := h.service.CreatePost(c, models.Post{
 		Title:    in.Title,
 		Content:  in.Content,
-		ImageURL: in.ImageURL,
+		ImageURL: &in.ImageURL,
 	})
 	if err != nil {
-		c.JSON(500, gin.H{"error": errs.ErrIntervalServerError.Error()})
+		c.JSON(500, err.Error())
 		return
 	}
 
 	c.JSON(201, post)
 }
 
-func (h *Handler) GetPostByIDHandler(c *gin.Context) {
+func (h *Handler) GetPostByID(c *gin.Context) {
 	idStr := c.Param("id")
 	postID, err := strconv.Atoi(idStr)
 	if err != nil {
-		c.JSON(400, gin.H{"error": errs.ErrBadRequest.Error()})
+		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	post, err := h.service.GetPostByIDService(c, postID)
+	post, err := h.service.GetPostByID(c, postID)
 	if err != nil {
-		c.JSON(500, gin.H{"error": errs.ErrIntervalServerError.Error()})
+		c.JSON(500, err.Error())
 		return
 	}
 
 	c.JSON(200, gin.H{"post": post})
 }
 
-func (h *Handler) GetPostsHandler(c *gin.Context) {
-	posts, err := h.service.GetPostsService(c)
+func (h *Handler) GetPosts(c *gin.Context) {
+	postList, err := h.service.GetPosts(c)
 	if err != nil {
-		c.JSON(500, gin.H{"error": errs.ErrIntervalServerError.Error()})
+		c.JSON(500, err.Error())
 		return
 	}
 
-	c.JSON(200, gin.H{"posts": posts})
+	c.JSON(200, gin.H{"post_list": postList})
 }
 
-func (h *Handler) UpdatePostHandler(c *gin.Context) {
+func (h *Handler) UpdatePost(c *gin.Context) {
 	idStr := c.Param("id")
 	postID, err := strconv.Atoi(idStr)
 	if err != nil {
-		c.JSON(400, gin.H{"error": errs.ErrBadRequest.Error()})
+		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
@@ -75,34 +75,34 @@ func (h *Handler) UpdatePostHandler(c *gin.Context) {
 	}{}
 
 	if err := c.BindJSON(&in); err != nil {
-		c.JSON(400, gin.H{"error": errs.ErrBadRequest.Error()})
+		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	post, err := h.service.UpdatePostService(c, postID, models.Post{
+	post, err := h.service.UpdatePost(c, postID, models.Post{
 		Title:    in.Title,
 		Content:  in.Content,
-		ImageURL: in.ImageURL,
+		ImageURL: &in.ImageURL,
 	})
 	if err != nil {
-		c.JSON(500, gin.H{"error": errs.ErrIntervalServerError.Error()})
+		c.JSON(500, err.Error())
 		return
 	}
 
-	c.JSON(200, gin.H{"success": post})
+	c.JSON(200, gin.H{"updated_post": post})
 }
 
-func (h *Handler) DeletePostHandler(c *gin.Context) {
+func (h *Handler) DeletePost(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		c.JSON(400, gin.H{"error": errs.ErrBadRequest.Error()})
+		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	err = h.service.DeletePostService(c, id)
+	err = h.service.DeletePost(c, id)
 	if err != nil {
-		c.JSON(500, gin.H{"error": errs.ErrIntervalServerError})
+		c.JSON(500, err.Error())
 		return
 	}
 
