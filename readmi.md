@@ -1,4 +1,4 @@
-### ТЗ к платформе Mini_Blog
+### ТЗ к платформе mini-blog
 
 # Стек технологии
 * Go
@@ -19,3 +19,5 @@
 Запус приложения - для запуска введите следуюшие команды:
 
 1. export DSN='host=localhost user=postgres password=postgres dbname=miniblog port=5433 sslmode=disable'
+
+Handler ---> Service ---> Repository

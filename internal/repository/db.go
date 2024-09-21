@@ -8,6 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
+type Repository struct {
+	DB *gorm.DB
+}
+
+func NewRepository(DB *gorm.DB) *Repository {
+	return &Repository{DB: DB}
+}
+
 func DBConnection(dsn string) (db *gorm.DB, err error) {
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -15,11 +23,11 @@ func DBConnection(dsn string) (db *gorm.DB, err error) {
 	}
 
 	err = db.AutoMigrate(
-		&models.User{},
+		//&models.User{},
 		&models.Post{},
 		&models.Comment{},
 		&models.Like{},
-		&models.Repost{},
+		// &models.Repost{},
 	)
 
 	if err != nil {
