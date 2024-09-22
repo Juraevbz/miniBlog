@@ -2,12 +2,7 @@ package repository
 
 import (
 	"context"
-	"errors"
-	"mini_blog/internal/errs"
 	"mini_blog/internal/models"
-	"time"
-
-	"gorm.io/gorm"
 )
 
 func (r *Repository) CreatePost(ctx context.Context, p models.Post) (*models.Post, error) {
@@ -48,23 +43,11 @@ func (r *Repository) UpdatePost(ctx context.Context, postID int, p models.Post) 
 	return &p, nil
 }
 
-func (r *Repository) DeletePost(ctx context.Context, postID int) error {
-	tNow := time.Now()
-	post := models.Post{
-		DeletedAt: &tNow,
-	}
-	
-	err := r.DB.WithContext(ctx).Where("id = ?", postID).Updates(&post).Error
+func (r *Repository) DeletePost(ctx context.Context, p models.Post) error {
+	err := r.DB.WithContext(ctx).Where("id = ?", p.ID).Updates(&p).Error
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func handleError(err error) error {
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return errs.ErrRecordNotFound
-	}
-	return err
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) CreateLike(c *gin.Context) {
+func (h *Handler) CreateRepost(c *gin.Context) {
 	in := struct {
 		PostID uint `json:"post_id"`
 	}{}
@@ -18,47 +18,48 @@ func (h *Handler) CreateLike(c *gin.Context) {
 		return
 	}
 
-	like, err := h.service.CreateLike(c, models.Like{
+	repost, err := h.service.CreateRepost(c, models.Repost{
 		PostID: in.PostID,
+		UserID: 1,
 	})
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
 
-	c.JSON(201, like)
+	c.JSON(201, repost)
 }
 
-func (h *Handler) GetLikeByID(c *gin.Context) {
+func (h *Handler) GetRepostByID(c *gin.Context) {
 	idStr := c.Param("id")
-	likeID, err := strconv.Atoi(idStr)
+	repostID, err := strconv.Atoi(idStr)
 	if err != nil {
 		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	like, err := h.service.GetLikeByID(c, likeID)
+	repost, err := h.service.GetRepostByID(c, repostID)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
 
-	c.JSON(200, like)
+	c.JSON(200, repost)
 }
 
-func (h *Handler) DeleteLike(c *gin.Context) {
+func (h *Handler) DeleteRepost(c *gin.Context) {
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	repostID, err := strconv.Atoi(idStr)
 	if err != nil {
 		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	err = h.service.DeleteLike(c, id)
+	err = h.service.DeleteRepost(c, repostID)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
 
-	c.JSON(200, "like deleted")
+	c.JSON(200, "repost deleted")
 }

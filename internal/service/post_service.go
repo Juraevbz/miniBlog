@@ -6,6 +6,7 @@ import (
 	"mini_blog/internal/errs"
 	"mini_blog/internal/models"
 	"mini_blog/internal/repository"
+	"time"
 )
 
 type Service struct {
@@ -79,7 +80,13 @@ func (s *Service) UpdatePost(ctx context.Context, postID int, p models.Post) (*m
 }
 
 func (s *Service) DeletePost(ctx context.Context, postID int) error {
-	err := s.repo.DeletePost(ctx, postID)
+	tNow := time.Now()
+	toUpdate := models.Post{
+		ID:        uint(postID),
+		DeletedAt: &tNow,
+	}
+
+	err := s.repo.DeletePost(ctx, toUpdate)
 	if err != nil {
 		return errors.Join(errs.ErrInternalDatabaseError, err)
 	}
