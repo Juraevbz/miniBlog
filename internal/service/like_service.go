@@ -19,3 +19,12 @@ func (s *Service) GetLikeByID(ctx context.Context, likeID int) (*models.Like, er
 
 	return like, nil
 }
+
+func (s *Service) DeleteLike(ctx context.Context, likeID int) error {
+	err := s.repo.DeleteLike(ctx, likeID)
+	if err != nil {
+		return errors.Join(errs.ErrInternalDatabaseError, err)
+	}
+
+	return nil
+}

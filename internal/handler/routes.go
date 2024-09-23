@@ -33,20 +33,24 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		comment.POST("", h.CreateComment)
 		comment.GET("/:id", h.GetCommentByID)
-		// updateComment
-		// deleteComment SOFT
+		comment.PUT("/:id", h.UpdateComment)           
+		comment.DELETE("/delete/:id", h.DeleteComment)
 	}
 
 	like := router.Group("/like")
 	{
 		like.POST("", h.CreateLike)
 		like.GET("/:id", h.GetLikeByID)
-		// deleteLike HARD
+		like.DELETE("/delete/:id", h.DeleteLike)
 	}
 
-	// TODO: implement Repost
-	// createRepost
-	// getRepostByID
-	// deleteRepost HARD or SOFT deside by yourself 
+
+	repost := router.Group("/repost")
+	{
+		repost.POST("", h.CreateRepost)             
+		repost.GET("/:id", h.GetRepostByID)         
+		repost.DELETE("/delete/:id", h.DeleteRepost) 
+	}
+
 	return router
 }

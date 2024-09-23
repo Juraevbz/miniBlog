@@ -31,10 +31,10 @@ type Post struct {
 }
 
 type PostList struct {
-	PostID    uint       `json:"post_id"`
-	Title     string     `json:"title"`
-	Comments  int        `json:"comments"`
-	Likes     int        `json:"likes"`
+	PostID   uint   `json:"post_id"`
+	Title    string `json:"title"`
+	Comments int    `json:"comments"`
+	Likes    int    `json:"likes"`
 }
 
 type Comment struct {
@@ -54,9 +54,13 @@ type Like struct {
 	DeletedAt *time.Time `json:"deleted_at"`
 }
 
-// type Repost struct {
-// 	ID        uint      `json:"id" gorm:"primaryKey"`
-// 	PostID    uint      `json:"post_id"`
-// 	UserID    uint      `json:"user_id"`
-// 	CreatedAt time.Time `json:"created_at"`
-// }
+type Repost struct {
+	ID        uint       `json:"id" gorm:"primaryKey"`
+	PostID    uint       `json:"post_id"`
+	UserID    uint       `json:"user_id"`
+	CreatedAt time.Time  `json:"created_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+	Comments  []*Comment `json:"comments"`
+	Likes     []*Like    `json:"likes"`
+	Post      Post       `json:"post" gorm:"foreignKeyPostID"`
+}
