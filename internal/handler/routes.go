@@ -47,7 +47,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	repost := router.Group("/repost")
 	{
-		repost.POST("", h.CreateRepost)             
+		repost.POST("/:id", h.CreateRepost)             
 		repost.GET("/:id", h.GetRepostByID)         
 		repost.DELETE("/delete/:id", h.DeleteRepost) 
 	}

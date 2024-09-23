@@ -8,8 +8,37 @@ import (
 	"time"
 )
 
-func (s *Service) CreateRepost(ctx context.Context, r models.Repost) (*models.Repost, error) {
-	return s.repo.CreateRepost(ctx, r)
+func (s *Service) CreateRepost(ctx context.Context, postID int) (*models.Repost, error) {
+	post, err := s.repo.GetPostByID(ctx, postID)
+	if err != nil {
+		return nil, errors.Join(errs.ErrInternalDatabaseError, err)
+	}
+
+	countComments, err := s.repo.CountComments(ctx, int(post.ID))
+	if err != nil && !errors.Is(err, errs.ErrRecordNotFound) {
+		return nil, errors.Join(errs.ErrInternalDatabaseError, err)
+	}
+
+	countLikes, err := s.repo.CountLikes(ctx, int(post.ID))
+	if err != nil && !errors.Is(err, errs.ErrRecordNotFound) {
+		return nil, errors.Join(errs.ErrInternalDatabaseError, err)
+	}
+
+	toCreate := models.Repost{
+		PostID:   uint(postID),
+		Title:    post.Title,
+		Content:  post.Content,
+		ImageURL: post.ImageURL,
+		Comments: countComments,
+		Likes:    countLikes,
+	}
+
+	repost, err := s.repo.CreateRepost(ctx, toCreate)
+	if err != nil {
+		return nil, err
+	}
+
+	return repost, nil
 }
 
 func (s *Service) GetRepostByID(ctx context.Context, repostID int) (*models.Repost, error) {
@@ -22,12 +51,11 @@ func (s *Service) GetRepostByID(ctx context.Context, repostID int) (*models.Repo
 
 func (s *Service) DeleteRepost(ctx context.Context, repostID int) error {
 	tNow := time.Now()
-	toUpdate := models.Repost{
-		ID:        uint(repostID),
+	toDelete := models.Repost{
 		DeletedAt: &tNow,
 	}
 
-	err := s.repo.DeleteRepost(ctx, toUpdate)
+	err := s.repo.DeleteRepost(ctx, repostID, toDelete)
 	if err != nil {
 		return errors.Join(errs.ErrInternalDatabaseError, err)
 	}
