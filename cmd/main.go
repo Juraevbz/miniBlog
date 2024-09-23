@@ -13,7 +13,7 @@ func main() {
 	// TODO: Validation in service layer
 	// TODO: Swagger docs 
 	// TODO: Test
-	
+	// TODO: Найти все упоминания id и привести в единый тип INT или UINT
 	dsn, err := config.InitConfig()
 	if err != nil {
 		log.Fatal("error initialize configuration", err)

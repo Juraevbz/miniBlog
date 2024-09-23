@@ -2,26 +2,20 @@ package handler
 
 import (
 	"mini_blog/internal/errs"
-	"mini_blog/internal/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) CreateRepost(c *gin.Context) {
-	in := struct {
-		PostID uint `json:"post_id"`
-	}{}
-
-	if err := c.BindJSON(&in); err != nil {
+	idStr := c.Param("id")
+	postID, err := strconv.Atoi(idStr)
+	if err != nil {
 		c.JSON(400, errs.ErrBadRequest.Error())
 		return
 	}
 
-	repost, err := h.service.CreateRepost(c, models.Repost{
-		PostID: in.PostID,
-		UserID: 1,
-	})
+	repost, err := h.service.CreateRepost(c, postID)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

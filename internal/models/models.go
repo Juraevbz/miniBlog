@@ -57,10 +57,11 @@ type Like struct {
 type Repost struct {
 	ID        uint       `json:"id" gorm:"primaryKey"`
 	PostID    uint       `json:"post_id"`
-	UserID    uint       `json:"user_id"`
+	Title     string     `json:"title"`
+	Content   string     `json:"content"`
+	ImageURL  *string    `json:"image_url"`
+	Comments  int        `json:"comments"`
+	Likes     int        `json:"likes"`
 	CreatedAt time.Time  `json:"created_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
-	Comments  []*Comment `json:"comments"`
-	Likes     []*Like    `json:"likes"`
-	Post      Post       `json:"post" gorm:"foreignKeyPostID"`
 }

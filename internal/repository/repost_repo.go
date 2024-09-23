@@ -16,7 +16,7 @@ func (r *Repository) CreateRepost(ctx context.Context, repost models.Repost) (*m
 
 func (r *Repository) GetRepostByID(ctx context.Context, repostID int) (*models.Repost, error) {
 	var repost models.Repost
-	err := r.DB.WithContext(ctx).Preload("Post").First(&repost, repostID).Error
+	err := r.DB.WithContext(ctx).First(&repost, repostID).Error
 	if err != nil {
 		return nil, err
 	}
@@ -24,8 +24,8 @@ func (r *Repository) GetRepostByID(ctx context.Context, repostID int) (*models.R
 	return &repost, nil
 }
 
-func (r *Repository) DeleteRepost(ctx context.Context, repos models.Repost) error {
-	err := r.DB.WithContext(ctx).Where("id = ?", repos.ID).Updates(&r).Error
+func (r *Repository) DeleteRepost(ctx context.Context, repostID int, repost models.Repost) error {
+	err := r.DB.WithContext(ctx).Where("id = ?", repostID).Updates(&repost).Error
 	if err != nil {
 		return err
 	}

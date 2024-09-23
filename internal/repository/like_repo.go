@@ -39,7 +39,7 @@ func (r *Repository) CountLikes(ctx context.Context, postID int) (int, error) {
 	var count int64
 	err := r.DB.WithContext(ctx).Model(&like).Where("post_id = ? AND deleted_at IS NULL", postID).Count(&count).Error
 	if err != nil {
-		return 0, err
+		return 0, handleError(err)
 	}
 
 	return int(count), nil
