@@ -3,21 +3,31 @@ package models
 import (
 	"errors"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
-// type User struct {
-// 	ID           uint      `json:"id" gorm:"primarykey"`
-// 	Username     string    `json:"username"`
-// 	Email        string    `json:"email"`
-// 	PasswordHash string    `json:"password_hash"`
-// 	AvatarURL    *string   `json:"avatar_url"`
-// 	CreatedAt    time.Time `json:"created_at"`
-// 	UpdatedAt    time.Time `json:"updated_at"`
-// 	DeletedAt    time.Time `json:"deleted_at"`
-// 	Posts        []Post    `gorm:"foreignKey:UserID"`
-// 	Comments     []Comment `gorm:"foreignKey:UserID"`
-// 	Repost       []Repost  `gorm:"foreignKey:UserID"`
-// }
+type User struct {
+	ID           uint      `json:"id" gorm:"primarykey"`
+	Username     string    `json:"username"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	AvatarURL    *string   `json:"avatar_url"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	DeletedAt    time.Time `json:"deleted_at"`
+}
+
+func (u *User) Validate() error {
+	if u.Username == "" {
+		return errors.New("username is required")
+	}
+	if u.PasswordHash == "" {
+		return errors.New("password is required")
+	}
+
+	return nil
+}
 
 type Post struct {
 	ID        int        `json:"id" gorm:"primaryKey"`
@@ -29,6 +39,16 @@ type Post struct {
 	DeletedAt *time.Time `json:"deleted_at"`
 	Comments  []*Comment `json:"comments"`
 	Likes     []*Like    `json:"likes"`
+}
+
+func (u *User) ComparePassword(rawPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(rawPassword))
+	return err == nil
+}
+
+func GeneratePasswordHash(password string) string {
+	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hash)
 }
 
 func (p *Post) Validate() error {
