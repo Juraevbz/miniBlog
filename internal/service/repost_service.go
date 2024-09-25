@@ -31,7 +31,6 @@ func (s *Service) CreateRepost(ctx context.Context, postID int) (*models.Repost,
 		PostID:   postID,
 		Title:    post.Title,
 		Content:  post.Content,
-		ImageURL: post.ImageURL,
 		Comments: countComments,
 		Likes:    countLikes,
 	}

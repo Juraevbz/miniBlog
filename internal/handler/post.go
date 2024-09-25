@@ -23,7 +23,6 @@ func (h *Handler) CreatePost(c *gin.Context) {
 	post, err := h.service.CreatePost(c, models.Post{
 		Title:    in.Title,
 		Content:  in.Content,
-		ImageURL: &in.ImageURL,
 	})
 	if err != nil {
 		c.JSON(500, err.Error())
@@ -82,7 +81,6 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 	post, err := h.service.UpdatePost(c, postID, models.Post{
 		Title:    in.Title,
 		Content:  in.Content,
-		ImageURL: &in.ImageURL,
 	})
 	if err != nil {
 		c.JSON(500, err.Error())
