@@ -10,7 +10,7 @@ import (
 
 func (h *Handler) CreateLike(c *gin.Context) {
 	in := struct {
-		PostID uint `json:"post_id"`
+		PostID int `json:"post_id"`
 	}{}
 
 	if err := c.BindJSON(&in); err != nil {

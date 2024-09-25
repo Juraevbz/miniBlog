@@ -10,7 +10,7 @@ import (
 
 func (h *Handler) CreateComment(c *gin.Context) {
 	in := struct {
-		PostID  uint   `json:"post_id"`
+		PostID  int    `json:"post_id"`
 		Comment string `json:"comment"`
 	}{}
 
@@ -57,7 +57,7 @@ func (h *Handler) UpdateComment(c *gin.Context) {
 	}
 
 	in := struct {
-		Comment   string `json:"comment"`
+		Comment string `json:"comment"`
 	}{}
 
 	if err := c.BindJSON(&in); err != nil {
@@ -92,4 +92,3 @@ func (h *Handler) DeleteComment(c *gin.Context) {
 
 	c.JSON(200, "comment deleted")
 }
-

@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"os"
+
+	"github.com/rs/zerolog"
 )
 
 type DBConfig struct {
@@ -16,28 +17,31 @@ type DBConfig struct {
 	DBName   string `json:"dbname"`
 }
 
-func InitConfig() (dsn string, err error) {
+func InitConfig(logger zerolog.Logger) (dsn string, err error) {
 	var config struct {
 		DB DBConfig `json:"db"`
 	}
 
 	file, err := os.Open("config/config.json")
 	if err != nil {
-		log.Fatal("error pening 'config.json' file")
+		logger.Error().Err(err).Msg("error pening 'config.json' file")
+		return "", err
 	}
 	defer file.Close()
 
 	data, err := io.ReadAll(file)
 	if err != nil {
-		log.Fatal("error reading file contents")
+		logger.Error().Err(err).Msg("error reading file contents")
+		return "", err
 	}
 
 	err = json.Unmarshal(data, &config)
 	if err != nil {
-		log.Fatal("error unmarshaling data to config")
+		logger.Error().Err(err).Msg("error unmarshaling data to config")
+		return "", err
 	}
 
-	dsn = fmt.Sprintf("postgres://%s:%s@%s:%s/%s", 
+	dsn = fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		config.DB.User, config.DB.Password, config.DB.Host, config.DB.Port, config.DB.DBName)
 
 	return dsn, nil

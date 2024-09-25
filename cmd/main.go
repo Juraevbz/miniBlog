@@ -1,34 +1,32 @@
 package main
 
 import (
-	"log"
 	"mini_blog/config"
 	"mini_blog/internal/handler"
 	"mini_blog/internal/repository"
 	"mini_blog/internal/service"
+	"mini_blog/pkg/glog"
 )
 
 func main() {
-	// TODO: Logger
-	// TODO: Validation in service layer
-	// TODO: Swagger docs 
-	// TODO: Test
-	// TODO: Найти все упоминания id и привести в единый тип INT или UINT
-	dsn, err := config.InitConfig()
+	logger := glog.NewLogger()
+
+	dsn, err := config.InitConfig(logger)
 	if err != nil {
-		log.Fatal("error initialize configuration", err)
+		logger.Fatal().Err(err).Msg("error initializing configuration")
 	}
 
 	db, err := repository.DBConnection(dsn)
 	if err != nil {
-		log.Fatal("failed to initialize DBConnection")
+		logger.Fatal().Err(err).Msg("failed to initialize DBConnection")
 	}
 
 	repository := repository.NewRepository(db)
-	service := service.NewService(repository)
+	service := service.NewService(repository, logger)
 	handler := handler.NewHandler(service)
 
+	logger.Info().Msg("server listening on port 8080")
 	if err = handler.Run("8080", handler.InitRoutes()); err != nil {
-		log.Fatal("error running server", err)
+		logger.Fatal().Err(err).Msg("error running server")
 	}
 }
