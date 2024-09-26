@@ -9,9 +9,15 @@ import (
 )
 
 func (h *Handler) CreateComment(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	in := struct {
-		PostID  int    `json:"post_id"`
-		Comment string `json:"comment"`
+		PostID  int    `json:"post_id" binding:"required"`
+		Comment string `json:"comment" binding:"required"`
 	}{}
 
 	if err := c.BindJSON(&in); err != nil {
@@ -20,6 +26,7 @@ func (h *Handler) CreateComment(c *gin.Context) {
 	}
 
 	comment, err := h.service.CreateComment(c, models.Comment{
+		UserID:  int(userID),
 		PostID:  in.PostID,
 		Comment: in.Comment,
 	})
@@ -32,6 +39,12 @@ func (h *Handler) CreateComment(c *gin.Context) {
 }
 
 func (h *Handler) GetCommentByID(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	commentID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -39,7 +52,7 @@ func (h *Handler) GetCommentByID(c *gin.Context) {
 		return
 	}
 
-	comment, err := h.service.GetCommentByID(c, commentID)
+	comment, err := h.service.GetCommentByID(c, commentID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -49,6 +62,12 @@ func (h *Handler) GetCommentByID(c *gin.Context) {
 }
 
 func (h *Handler) UpdateComment(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	commentID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -57,7 +76,7 @@ func (h *Handler) UpdateComment(c *gin.Context) {
 	}
 
 	in := struct {
-		Comment string `json:"comment"`
+		Comment string `json:"comment" binding:"required"`
 	}{}
 
 	if err := c.BindJSON(&in); err != nil {
@@ -66,6 +85,7 @@ func (h *Handler) UpdateComment(c *gin.Context) {
 	}
 
 	comment, err := h.service.UpdateComment(c, commentID, models.Comment{
+		UserID:  int(userID),
 		Comment: in.Comment,
 	})
 	if err != nil {
@@ -77,6 +97,12 @@ func (h *Handler) UpdateComment(c *gin.Context) {
 }
 
 func (h *Handler) DeleteComment(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	commentID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -84,7 +110,7 @@ func (h *Handler) DeleteComment(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeleteComment(c, commentID)
+	err = h.service.DeleteComment(c, commentID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

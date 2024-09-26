@@ -38,7 +38,7 @@ func (s *Service) CreatePost(ctx context.Context, p models.Post) (*models.Post, 
 	return post, nil
 }
 
-func (s *Service) GetPostByID(ctx context.Context, postID int) (*models.Post, error) {
+func (s *Service) GetPostByID(ctx context.Context, postID int, userID int) (*models.Post, error) {
 	post, err := s.repo.GetPostByID(ctx, postID)
 	if err != nil {
 		s.logger.Error().Err(err).Int("postID", postID).Msg("error getting post by id")
@@ -63,7 +63,7 @@ func (s *Service) GetPostByID(ctx context.Context, postID int) (*models.Post, er
 	return post, nil
 }
 
-func (s *Service) GetPosts(ctx context.Context) ([]*models.PostList, error) {
+func (s *Service) GetPosts(ctx context.Context, userID int) ([]*models.PostList, error) {
 	posts, err := s.repo.GetPosts(ctx)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("failed to get posts form database")
@@ -106,7 +106,7 @@ func (s *Service) UpdatePost(ctx context.Context, postID int, p models.Post) (*m
 	return post, nil
 }
 
-func (s *Service) DeletePost(ctx context.Context, postID int) error {
+func (s *Service) DeletePost(ctx context.Context, postID int, userID int) error {
 	tNow := time.Now()
 	toUpdate := models.Post{
 		ID:        postID,

@@ -23,7 +23,7 @@ func DBConnection(dsn string) (db *gorm.DB, err error) {
 	}
 
 	err = db.AutoMigrate(
-		//&models.User{},
+		&models.User{},
 		&models.Post{},
 		&models.Comment{},
 		&models.Like{},

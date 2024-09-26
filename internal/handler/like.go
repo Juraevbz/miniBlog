@@ -9,6 +9,12 @@ import (
 )
 
 func (h *Handler) CreateLike(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	in := struct {
 		PostID int `json:"post_id"`
 	}{}
@@ -19,6 +25,7 @@ func (h *Handler) CreateLike(c *gin.Context) {
 	}
 
 	like, err := h.service.CreateLike(c, models.Like{
+		UserID: int(userID),
 		PostID: in.PostID,
 	})
 	if err != nil {
@@ -30,6 +37,12 @@ func (h *Handler) CreateLike(c *gin.Context) {
 }
 
 func (h *Handler) GetLikeByID(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	likeID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -37,7 +50,7 @@ func (h *Handler) GetLikeByID(c *gin.Context) {
 		return
 	}
 
-	like, err := h.service.GetLikeByID(c, likeID)
+	like, err := h.service.GetLikeByID(c, likeID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -47,6 +60,12 @@ func (h *Handler) GetLikeByID(c *gin.Context) {
 }
 
 func (h *Handler) DeleteLike(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -54,7 +73,7 @@ func (h *Handler) DeleteLike(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeleteLike(c, id)
+	err = h.service.DeleteLike(c, id, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

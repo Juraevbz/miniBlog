@@ -8,6 +8,12 @@ import (
 )
 
 func (h *Handler) CreateRepost(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	postID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -15,7 +21,7 @@ func (h *Handler) CreateRepost(c *gin.Context) {
 		return
 	}
 
-	repost, err := h.service.CreateRepost(c, postID)
+	repost, err := h.service.CreateRepost(c, postID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -25,6 +31,12 @@ func (h *Handler) CreateRepost(c *gin.Context) {
 }
 
 func (h *Handler) GetRepostByID(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	repostID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -32,7 +44,7 @@ func (h *Handler) GetRepostByID(c *gin.Context) {
 		return
 	}
 
-	repost, err := h.service.GetRepostByID(c, repostID)
+	repost, err := h.service.GetRepostByID(c, repostID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -42,6 +54,12 @@ func (h *Handler) GetRepostByID(c *gin.Context) {
 }
 
 func (h *Handler) DeleteRepost(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	repostID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -49,7 +67,7 @@ func (h *Handler) DeleteRepost(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeleteRepost(c, repostID)
+	err = h.service.DeleteRepost(c, repostID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -57,3 +75,4 @@ func (h *Handler) DeleteRepost(c *gin.Context) {
 
 	c.JSON(200, "repost deleted")
 }
+

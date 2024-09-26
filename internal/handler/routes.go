@@ -19,7 +19,13 @@ func NewHandler(service *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
 
-	post := router.Group("/post")
+	user := router.Group("/user")
+	{
+		user.POST("/sign-up", h.signUp)
+		user.POST("/sign-in", h.signIn)
+	}
+
+	post := router.Group("/post", h.AuthenticateUser)
 	{
 		// TODO: implment image saving logic
 		post.POST("", h.CreatePost)
@@ -29,7 +35,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		post.DELETE("/delete/:id", h.DeletePost)
 	}
 
-	comment := router.Group("/comment")
+	comment := router.Group("/comment", h.AuthenticateUser)
 	{
 		comment.POST("", h.CreateComment)
 		comment.GET("/:id", h.GetCommentByID)
@@ -37,7 +43,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		comment.DELETE("/delete/:id", h.DeleteComment)
 	}
 
-	like := router.Group("/like")
+	like := router.Group("/like", h.AuthenticateUser)
 	{
 		like.POST("", h.CreateLike)
 		like.GET("/:id", h.GetLikeByID)
@@ -45,7 +51,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 
 
-	repost := router.Group("/repost")
+	repost := router.Group("/repost", h.AuthenticateUser)
 	{
 		repost.POST("/:id", h.CreateRepost)             
 		repost.GET("/:id", h.GetRepostByID)         

@@ -8,11 +8,9 @@ import (
 )
 
 type User struct {
-	ID           uint      `json:"id" gorm:"primarykey"`
+	ID           int       `json:"id" gorm:"primarykey"`
 	Username     string    `json:"username"`
-	Email        string    `json:"email"`
 	PasswordHash string    `json:"password_hash"`
-	AvatarURL    *string   `json:"avatar_url"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
@@ -29,18 +27,6 @@ func (u *User) Validate() error {
 	return nil
 }
 
-type Post struct {
-	ID        int        `json:"id" gorm:"primaryKey"`
-	Title     string     `json:"title"`
-	Content   string     `json:"content"`
-	ImageURL  *string    `json:"image_url"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
-	Comments  []*Comment `json:"comments"`
-	Likes     []*Like    `json:"likes"`
-}
-
 func (u *User) ComparePassword(rawPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(rawPassword))
 	return err == nil
@@ -51,6 +37,18 @@ func GeneratePasswordHash(password string) string {
 	return string(hash)
 }
 
+type Post struct {
+	ID        int        `json:"id" gorm:"primaryKey"`
+	UserID    int        `json:"user_id"`
+	Title     string     `json:"title"`
+	Content   string     `json:"content"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+	Comments  []*Comment `json:"comments"`
+	Likes     []*Like    `json:"likes"`
+}
+
 func (p *Post) Validate() error {
 	if p.Title == "" {
 		return errors.New("title is required")
@@ -58,12 +56,12 @@ func (p *Post) Validate() error {
 	if p.Content == "" {
 		return errors.New("content is required")
 	}
-
 	return nil
 }
 
 type PostList struct {
 	PostID   int    `json:"post_id"`
+	UserID   int    `json:"user_id"`
 	Title    string `json:"title"`
 	Comments int    `json:"comments"`
 	Likes    int    `json:"likes"`
@@ -71,6 +69,7 @@ type PostList struct {
 
 type Comment struct {
 	ID        int        `json:"id" gorm:"primaryKey"`
+	UserID    int        `json:"user_id"`
 	PostID    int        `json:"post_id"`
 	Comment   string     `json:"comment"`
 	CreatedAt time.Time  `json:"created_at"`
@@ -85,12 +84,12 @@ func (c *Comment) Validate() error {
 	if c.Comment == "" {
 		return errors.New("comment is required")
 	}
-
 	return nil
 }
 
 type Like struct {
 	ID        int        `json:"id" gorm:"primaryKey"`
+	UserID    int        `json:"user_id"`
 	PostID    int        `json:"post_id"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
@@ -101,12 +100,12 @@ func (l *Like) Validate() error {
 	if l.PostID == 0 {
 		return errors.New("post_id is required")
 	}
-
 	return nil
 }
 
 type Repost struct {
 	ID        int        `json:"id" gorm:"primaryKey"`
+	UserID    int        `json:"user_id"`
 	PostID    int        `json:"post_id"`
 	Title     string     `json:"title"`
 	Content   string     `json:"content"`
@@ -115,12 +114,4 @@ type Repost struct {
 	Likes     int        `json:"likes"`
 	CreatedAt time.Time  `json:"created_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
-}
-
-func (r *Repost) Validate() error {
-	if r.PostID == 0 {
-		return errors.New("post_id is required")
-	}
-
-	return nil
 }
