@@ -9,9 +9,15 @@ import (
 )
 
 func (h *Handler) CreatePost(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	in := struct {
-		Title    string `json:"title"`
-		Content  string `json:"content"`
+		Title    string `json:"title" binding:"required"`
+		Content  string `json:"content" binding:"required"`
 		ImageURL string `json:"image_url"`
 	}{}
 
@@ -21,6 +27,7 @@ func (h *Handler) CreatePost(c *gin.Context) {
 	}
 
 	post, err := h.service.CreatePost(c, models.Post{
+		UserID:   int(userID),
 		Title:    in.Title,
 		Content:  in.Content,
 	})
@@ -33,6 +40,12 @@ func (h *Handler) CreatePost(c *gin.Context) {
 }
 
 func (h *Handler) GetPostByID(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	postID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -40,7 +53,7 @@ func (h *Handler) GetPostByID(c *gin.Context) {
 		return
 	}
 
-	post, err := h.service.GetPostByID(c, postID)
+	post, err := h.service.GetPostByID(c, postID, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -50,7 +63,13 @@ func (h *Handler) GetPostByID(c *gin.Context) {
 }
 
 func (h *Handler) GetPosts(c *gin.Context) {
-	postList, err := h.service.GetPosts(c)
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
+	postList, err := h.service.GetPosts(c, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -60,6 +79,12 @@ func (h *Handler) GetPosts(c *gin.Context) {
 }
 
 func (h *Handler) UpdatePost(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	postID, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -68,8 +93,8 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 	}
 
 	in := struct {
-		Title    string `json:"title"`
-		Content  string `json:"content"`
+		Title    string `json:"title" binding:"required"`
+		Content  string `json:"content" binding:"required"`
 		ImageURL string `json:"image_url"`
 	}{}
 
@@ -79,6 +104,7 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 	}
 
 	post, err := h.service.UpdatePost(c, postID, models.Post{
+		UserID:   int(userID),
 		Title:    in.Title,
 		Content:  in.Content,
 	})
@@ -91,6 +117,12 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 }
 
 func (h *Handler) DeletePost(c *gin.Context) {
+	userID := c.GetFloat64("user_id")
+	if userID == 0 {
+		c.JSON(401, errs.ErrUnauthorized.Error())
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -98,7 +130,7 @@ func (h *Handler) DeletePost(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeletePost(c, id)
+	err = h.service.DeletePost(c, id, int(userID))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -106,3 +138,4 @@ func (h *Handler) DeletePost(c *gin.Context) {
 
 	c.JSON(200, "post deleted")
 }
+

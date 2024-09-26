@@ -22,7 +22,7 @@ func (s *Service) CreateLike(ctx context.Context, l models.Like) (*models.Like, 
 	return like, nil
 }
 
-func (s *Service) GetLikeByID(ctx context.Context, likeID int) (*models.Like, error) {
+func (s *Service) GetLikeByID(ctx context.Context, likeID int, userID int) (*models.Like, error) {
 	like, err := s.repo.GetLikeByID(ctx, likeID)
 	if err != nil {
 		s.logger.Error().Err(err).Int("likeID", likeID).Msg("failed to get like by id")
@@ -32,7 +32,7 @@ func (s *Service) GetLikeByID(ctx context.Context, likeID int) (*models.Like, er
 	return like, nil
 }
 
-func (s *Service) DeleteLike(ctx context.Context, likeID int) error {
+func (s *Service) DeleteLike(ctx context.Context, likeID int, userID int) error {
 	err := s.repo.DeleteLike(ctx, likeID)
 	if err != nil {
 		s.logger.Error().Err(err).Int("likeID", likeID).Msg("failed to delete like")

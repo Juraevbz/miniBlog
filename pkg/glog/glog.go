@@ -10,6 +10,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+const logDir = "logs"
+
 type TracingHook struct{}
 
 func (h TracingHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
@@ -18,31 +20,49 @@ func (h TracingHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
 	e.Str("span-id", spanId)
 }
 
+type TimestampHook struct{}
+
+func (t TimestampHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
+	e.Time("datetime", time.Now().UTC())
+}
+
 func getSpanIdFromContext(ctx context.Context) string {
 	span := trace.SpanFromContext(ctx)
 	return span.SpanContext().SpanID().String()
 }
 
-func NewTracingLogger() zerolog.Logger {
-	logger := zerolog.New(os.Stdout)
-	logger = logger.Hook(TracingHook{})
-	return logger
-}
-
 func NewLogger() zerolog.Logger {
-	logDir := "logs"
-	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	logFile := filepath.Join(logDir, time.Now().Format("2006-01-02") + ".log")
-	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	err := os.MkdirAll(logDir, os.ModePerm)
 	if err != nil {
-		panic(err)
+		panic("Failed to create log directory: " + err.Error())
 	}
 
-	multi := zerolog.MultiLevelWriter(file, os.Stdout)
-	logger := zerolog.New(multi).With().Timestamp().Logger()
+	errorLog, err := os.OpenFile(filepath.Join(logDir, "error.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic("Failed to open error log file: " + err.Error())
+	}
+
+	infoLog, err := os.OpenFile(filepath.Join(logDir, "info.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic("Failed to open info log file: " + err.Error())
+	}
+
+	warnLog, err := os.OpenFile(filepath.Join(logDir, "warn.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic("Failed to open warn log file: " + err.Error())
+	}
+
+	debugLog, err := os.OpenFile(filepath.Join(logDir, "debug.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic("Failed to open debug log file: " + err.Error())
+	}
+
+	multiError := zerolog.MultiLevelWriter(errorLog)
+	multiInfo := zerolog.MultiLevelWriter(infoLog)
+	multiWarn := zerolog.MultiLevelWriter(warnLog)
+	multiDebug := zerolog.MultiLevelWriter(debugLog)
+
+	logger := zerolog.New(zerolog.MultiLevelWriter(multiError, multiInfo, multiWarn, multiDebug)).Hook(TimestampHook{}).With().Logger()
 
 	return logger
 }

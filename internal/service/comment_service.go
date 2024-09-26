@@ -23,7 +23,7 @@ func (s *Service) CreateComment(ctx context.Context, c models.Comment) (*models.
 	return comment, nil
 }
 
-func (s *Service) GetCommentByID(ctx context.Context, commentID int) (*models.Comment, error) {
+func (s *Service) GetCommentByID(ctx context.Context, commentID int, userID int) (*models.Comment, error) {
 	comment, err := s.repo.GetCommentByID(ctx, commentID)
 	if err != nil {
 		s.logger.Error().Err(err).Int("commentID", commentID).Msg("failed to get comment by id")
@@ -43,7 +43,7 @@ func (s *Service) UpdateComment(ctx context.Context, commentID int, c models.Com
 	return comment, nil
 }
 
-func (s *Service) DeleteComment(ctx context.Context, commentID int) error {
+func (s *Service) DeleteComment(ctx context.Context, commentID int, userID int) error {
 	tNow := time.Now()
 	toUpdate := models.Comment{
 		ID:        commentID,

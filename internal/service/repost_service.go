@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (s *Service) CreateRepost(ctx context.Context, postID int) (*models.Repost, error) {
+func (s *Service) CreateRepost(ctx context.Context, postID int, userID int) (*models.Repost, error) {
 	post, err := s.repo.GetPostByID(ctx, postID)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("failed to get post by id")
@@ -44,7 +44,7 @@ func (s *Service) CreateRepost(ctx context.Context, postID int) (*models.Repost,
 	return repost, nil
 }
 
-func (s *Service) GetRepostByID(ctx context.Context, repostID int) (*models.Repost, error) {
+func (s *Service) GetRepostByID(ctx context.Context, repostID int, userID int) (*models.Repost, error) {
 	repost, err := s.repo.GetRepostByID(ctx, repostID)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("failed to get repost by id")
@@ -54,7 +54,7 @@ func (s *Service) GetRepostByID(ctx context.Context, repostID int) (*models.Repo
 	return repost, nil
 }
 
-func (s *Service) DeleteRepost(ctx context.Context, repostID int) error {
+func (s *Service) DeleteRepost(ctx context.Context, repostID int, userID int) error {
 	tNow := time.Now()
 	toDelete := models.Repost{
 		DeletedAt: &tNow,
